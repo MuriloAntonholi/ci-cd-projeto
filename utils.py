@@ -9,5 +9,5 @@ def mult(a, b):
 
 def div(a, b):
     if b == 0:
-        return "Erro: divisão por zero"
+        raise ValueError("Divisão por zero não permitida")
     return a / b
