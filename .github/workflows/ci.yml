@@ -1,4 +1,4 @@
-name: CI Pipeline with Discord Alerts
+name: CI com Testes e Alertas
 
 on:
   push:
@@ -13,13 +13,21 @@ jobs:
       - name: Checkout código
         uses: actions/checkout@v3
 
-      - name: Rodar script (exemplo)
-        run: echo "Rodando testes..."
+      - name: Configurar Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Instalar dependências
+        run: pip install pytest
+
+      - name: Rodar testes unitários
+        run: pytest --maxfail=1 --disable-warnings -q
 
       - name: Enviar alerta para o Discord
         if: always()
         run: |
           STATUS="${{ job.status }}"
           curl -H "Content-Type: application/json" \
-               -d "{\"content\": \"🚀 Workflow finalizado com status: **$STATUS** no repositório $GITHUB_REPOSITORY\"}" \
+               -d "{\"content\": \"🔔 Testes finalizados! Status: **$STATUS** no repositório $GITHUB_REPOSITORY\"}" \
                ${{ secrets.DISCORD_WEBHOOK_URL }}
