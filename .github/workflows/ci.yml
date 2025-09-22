@@ -1,8 +1,8 @@
-name: CI Pipeline
+name: CI Pipeline with Discord Alerts
 
 on:
   push:
-    branches: [ main, feature-* ]
+    branches: [ main ]
   pull_request:
     branches: [ main ]
 
@@ -10,11 +10,16 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - name: Configura Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: "3.10"
-      - name: Roda o script
-        run: python main.py
+      - name: Checkout código
+        uses: actions/checkout@v3
 
+      - name: Rodar script (exemplo)
+        run: echo "Rodando testes..."
+
+      - name: Enviar alerta para o Discord
+        if: always()
+        run: |
+          STATUS="${{ job.status }}"
+          curl -H "Content-Type: application/json" \
+               -d "{\"content\": \"🚀 Workflow finalizado com status: **$STATUS** no repositório $GITHUB_REPOSITORY\"}" \
+               ${{ secrets.DISCORD_WEBHOOK_URL }}
